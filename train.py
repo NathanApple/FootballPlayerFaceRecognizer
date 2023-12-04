@@ -48,19 +48,21 @@ for idx, person_list in enumerate(train_list):
     for img_full_path in person_list:
         img = cv2.imread(img_full_path, 0)
 
-        detected_face = face_cascade.detectMultiScale(img, scaleFactor=1.5, minNeighbors=7)
+        detected_face = face_cascade.detectMultiScale(img, scaleFactor=1.2, minNeighbors=5)
 
         if len(detected_face) < 1:
             continue
         
         if len(detected_face) > 1:
-            extra_face += len(detected_face) - 1
-            img_bgr = cv2.imread(img_full_path)
-            for face_rect in detected_face:
-                x, y, h, w = face_rect
-                cv2.rectangle(img_bgr,  (x, y), (x+w, y+h), (0, 255, 0))
-            cv2.imshow('Result '+img_full_path, img_bgr)
-            cv2.waitKey(0)
+            # extra_face += len(detected_face) - 1
+            # img_bgr = cv2.imread(img_full_path)
+            # for face_rect in detected_face:
+            #     x, y, h, w = face_rect
+            #     cv2.rectangle(img_bgr,  (x, y), (x+w, y+h), (0, 255, 0))
+            # cv2.imshow('Result '+img_full_path, img_bgr)
+            # cv2.waitKey(0)
+            continue;
+            pass;
         
         for face_rect in detected_face:
             x, y, h, w = face_rect
@@ -71,11 +73,11 @@ for idx, person_list in enumerate(train_list):
 
 
 
-print("Total Face Detected: " + str(len(class_list)))
+# print("Total Face Detected: " + str(len(class_list)))
 # print(len(face_list))
-print("Total Extra Face Detected: " + str(extra_face))
+# print("Total Extra Face Detected: " + str(extra_face))
 
-exit()
+# exit()
 
 
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -90,9 +92,14 @@ for image_name in os.listdir(test_path):
     img_gray = cv2.imread(full_img_path, 0)
     img_bgr = cv2.imread(full_img_path)
     
-    detected_face = face_cascade.detectMultiScale(img_gray, scaleFactor=1.2, minNeighbors=11)
+    detected_face = face_cascade.detectMultiScale(img_gray, scaleFactor=1.2, minNeighbors=5)
     
     if len(detected_face) < 1:
+        accuracy_list.append(False)
+        continue
+    
+    if len(detected_face) > 1:
+        accuracy_list.append(False)
         continue
     
     for face_rect in detected_face:
@@ -102,8 +109,10 @@ for image_name in os.listdir(test_path):
         res, confidence = face_recognizer.predict(face_img)
         
         cv2.rectangle(img_bgr,  (x, y), (x+w, y+h), (0, 255, 0))
-        text = person_name[res] + ' : ' + str(confidence)
+        text = person_name[res] + " | " + image_name + ' : ' + str(confidence)
         cv2.putText(img_bgr, text, (x, y-10), cv2.FONT_HERSHEY_PLAIN, 1.5, (0, 255, 0), 2)
         cv2.imshow('Result '+image_name, img_bgr)
         cv2.waitKey(0)
+        
+        # if ()
         
